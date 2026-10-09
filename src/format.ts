@@ -79,7 +79,7 @@ export function windowsNow(snapshot: Snapshot, nowMs: number): SnapshotWindow[] 
   return snapshot.windows.map(w => current(w, nowMs))
 }
 
-// One status bar item per meter, so each takes its own level colour.
+// One window's part of the status bar line, with its level.
 export type StatusCell = { key: string; text: string; level: Level }
 
 export type StatusOptions = {
@@ -182,7 +182,7 @@ export function tooltipMarkdown(snapshot: Snapshot, nowMs: number): string {
     )
   }
   const footer = [`snapshot ${age(nowMs - Date.parse(snapshot.writtenAt))} ago`]
-  if (snapshot.session.cwd) footer.push(`session in \`${snapshot.session.cwd}\``)
+  if (snapshot.session.cwd) footer.push(`session in ${codeSpan(snapshot.session.cwd)}`)
   parts.push(`_Token Watch · ${footer.join(' · ')}_`)
   parts.push(TOOLTIP_ACTIONS)
   return parts.join('\n\n')
@@ -222,6 +222,12 @@ function svgImage(svg: string, width: number, height: number): string {
   return `<img src="${uri}" width="${width}" height="${height}">`
 }
 
+// A path as inline code. A backtick in it would end the code span early, so
+// it becomes a quote mark.
+function codeSpan(text: string): string {
+  return '`' + text.replace(/`/g, '‘') + '`'
+}
+
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
@@ -230,7 +236,7 @@ function escapeHtml(text: string): string {
 export function waitingMarkdown(snapshotPath: string, snapshot: Snapshot | null, nowMs: number): string {
   const lines = [
     '**Token Watch** is waiting for a snapshot from Claude Code.',
-    `It reads \`${snapshotPath}\`, which the [Token Watch mod](https://github.com/nevermemo/token-watch) writes after each response while a Claude Code session is open: the terminal, the desktop app or the VS Code chat panel.`,
+    `It reads ${codeSpan(snapshotPath)}, which the [Token Watch mod](https://github.com/nevermemo/token-watch) writes after each response while a Claude Code session is open: the terminal, the desktop app or the VS Code chat panel.`,
     'Install the mod: `claude plugin marketplace add nevermemo/token-watch`, then `claude plugin install token-watch@token-watch`.',
   ]
   if (snapshot !== null) lines.push(`_Last snapshot ${age(nowMs - Date.parse(snapshot.writtenAt))} ago._`)

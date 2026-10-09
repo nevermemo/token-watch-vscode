@@ -65,12 +65,13 @@
         "tokenWatch.snapshotPath": {
           "type": "string",
           "default": "",
-          "markdownDescription": "Path of the snapshot the Token Watch mod writes. Empty: `~/.claude/token-watch/usage.json`. `~` is expanded."
+          "scope": "machine",
+          "markdownDescription": "Path of the snapshot the Token Watch mod writes. Empty: `~/.claude/token-watch/usage.json`. `~` is expanded. A user setting only: a folder you open cannot point it at another file."
         },
         "tokenWatch.showContext": {
           "type": "boolean",
           "default": true,
-          "description": "Show the context window (CTX) in the status bar item."
+          "description": "Show the context window (CTX) in the status bar."
         },
         "tokenWatch.showBars": {
           "type": "boolean",
@@ -97,7 +98,7 @@
             "right"
           ],
           "default": "right",
-          "description": "Which side of the status bar the item sits on."
+          "description": "Which side of the status bar Token Watch sits on."
         }
       }
     }

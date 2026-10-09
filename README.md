@@ -2,7 +2,7 @@
 
 **Your Claude Code plan usage and context window in the VS Code status bar.**
 
-Token Watch for VS Code shows `5H ████▉░ 82% · 41m    WK ██▏░░░ 35%    CTX █▌░░░░ 26%` in the status bar: the 5-hour and weekly usage windows of your Claude subscription, any other window Claude Code reports (a model's own allowance, a gateway's spend limit), and how full the current session's context window is. Hover for the reset countdowns and the context breakdown; click for a panel that draws the same bars as the [Token Watch](https://github.com/nevermemo/token-watch) mod for Claude Code.
+Token Watch for VS Code shows `5H ████▉░ 82% · 41m    WK ██▏░░░ 35%    CTX █▌░░░░ 26%` in the status bar: the 5-hour and weekly usage windows of your Claude subscription, any other window Claude Code reports (a model's own allowance, a gateway's spend limit), and how full the current session's context window is. Hover for the reset countdowns and the context breakdown, click the meters to turn them on or off, and click the pulse icon for a panel that draws the same bars as the [Token Watch](https://github.com/nevermemo/token-watch) mod for Claude Code.
 
 It is that mod's companion and needs it: the mod writes a small snapshot file after each response, and this extension reads it. The VS Code extension's chat panel shows no mod drawings, which is why the band lives in the status bar here.
 
@@ -42,7 +42,7 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 
 | Setting | Default | Meaning |
 |---------|---------|---------|
-| `tokenWatch.snapshotPath` | `""` | The snapshot's path. Empty means `~/.claude/token-watch/usage.json`; `~` is expanded. |
+| `tokenWatch.snapshotPath` | `""` | The snapshot's path. Empty means `~/.claude/token-watch/usage.json`; `~` is expanded. User settings only, so a folder you open cannot point it at another file. |
 | `tokenWatch.showContext` | `true` | Show `CTX` in the status bar. |
 | `tokenWatch.showBars` | `true` | Draw the meter beside each percentage. A click on a meter flips this. |
 | `tokenWatch.show` | `all` | `alerts` shows only the meters from 50% up, for a crowded status bar; the icon stays. |
