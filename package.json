@@ -1,0 +1,58 @@
+{
+  "name": "token-watch",
+  "displayName": "Token Watch",
+  "description": "Claude Code plan usage and context window in the status bar, from the Token Watch mod's snapshot.",
+  "version": "0.1.0",
+  "publisher": "nevermemo",
+  "license": "Apache-2.0",
+  "author": { "name": "Kadir Mert Okumus" },
+  "repository": { "type": "git", "url": "https://github.com/nevermemo/token-watch-vscode" },
+  "homepage": "https://github.com/nevermemo/token-watch-vscode#readme",
+  "bugs": { "url": "https://github.com/nevermemo/token-watch-vscode/issues" },
+  "engines": { "vscode": "^1.94.0", "node": ">=20" },
+  "categories": ["Other"],
+  "keywords": ["claude code", "tokens", "usage", "context window", "status bar"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "tokenWatch.showPanel", "title": "Show Panel", "category": "Token Watch" },
+      { "command": "tokenWatch.refresh", "title": "Refresh", "category": "Token Watch" }
+    ],
+    "configuration": {
+      "title": "Token Watch",
+      "properties": {
+        "tokenWatch.snapshotPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path of the snapshot the Token Watch mod writes. Empty: `~/.claude/token-watch/usage.json`. `~` is expanded."
+        },
+        "tokenWatch.showContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the context window (CTX) in the status bar item."
+        },
+        "tokenWatch.alignment": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "right",
+          "description": "Which side of the status bar the item sits on."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run build",
+    "test": "node --test \"out/test/*.test.js\"",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "1.94.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.6.0"
+  }
+}
