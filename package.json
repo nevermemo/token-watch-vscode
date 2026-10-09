@@ -36,6 +36,11 @@
           "default": true,
           "description": "Show the context window (CTX) in the status bar item."
         },
+        "tokenWatch.showBars": {
+          "type": "boolean",
+          "default": true,
+          "description": "Draw a small meter beside each percentage in the status bar item (5H ▰▰▰▰▰▱▱▱ 62%)."
+        },
         "tokenWatch.alignment": {
           "type": "string",
           "enum": ["left", "right"],

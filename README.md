@@ -2,7 +2,7 @@
 
 **Your Claude Code plan usage and context window in the VS Code status bar.**
 
-Token Watch for VS Code shows `5H 62% · WK 31% · CTX 21%` in the status bar: the 5-hour and weekly usage windows of your Claude subscription, any other window Claude Code reports (a model's own allowance, a gateway's spend limit), and how full the current session's context window is. Hover for the reset countdowns and the context breakdown; click for a panel that draws the same bars as the [Token Watch](https://github.com/nevermemo/token-watch) mod for Claude Code.
+Token Watch for VS Code shows `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%` in the status bar: the 5-hour and weekly usage windows of your Claude subscription, any other window Claude Code reports (a model's own allowance, a gateway's spend limit), and how full the current session's context window is. Hover for the reset countdowns and the context breakdown; click for a panel that draws the same bars as the [Token Watch](https://github.com/nevermemo/token-watch) mod for Claude Code.
 
 It is that mod's companion and needs it: the mod writes a small snapshot file after each response, and this extension reads it. The VS Code extension's chat panel shows no mod drawings, which is why the band lives in the status bar here.
 
@@ -30,7 +30,7 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 
 | Where | What |
 |-------|------|
-| Status bar | `5H 62% · WK 31% · CTX 21%`. The item turns to the warning colour from 50% and the error colour from 80%, like the mod's percentages. |
+| Status bar | `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%`: a small meter beside each percentage, filled in proportion. The item turns to the warning colour from 50% and the error colour from 80%, like the mod's percentages. |
 | Tooltip | Each window with its reset countdown; the context total, auto-compact point and categories, largest first; the snapshot's age. |
 | Panel (click the item, or **Token Watch: Show Panel**) | The mod's bars: a meter per window, the context broken down by category with the free space as a grey track and the reserve past the auto-compact point darker, and the legend. It refreshes as the snapshot changes. |
 
@@ -43,6 +43,7 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 |---------|---------|---------|
 | `tokenWatch.snapshotPath` | `""` | The snapshot's path. Empty means `~/.claude/token-watch/usage.json`; `~` is expanded. |
 | `tokenWatch.showContext` | `true` | Show `CTX` in the status bar item. |
+| `tokenWatch.showBars` | `true` | Draw the small meter beside each percentage in the status bar item. |
 | `tokenWatch.alignment` | `right` | Which side of the status bar the item sits on. |
 
 ## Commands

@@ -80,10 +80,22 @@ export function windowsNow(snapshot: Snapshot, nowMs: number): SnapshotWindow[] 
 }
 
 // The status bar's text: "5H 62% · WK 31% · CTX 21%".
-export function statusText(snapshot: Snapshot, nowMs: number, showContext: boolean): string {
-  const parts = windowsNow(snapshot, nowMs).map(w => `${w.label} ${Math.round(w.percentUsed)}%`)
-  if (showContext && snapshot.context !== null) parts.push(`CTX ${snapshot.context.percent}%`)
+export function statusText(snapshot: Snapshot, nowMs: number, showContext: boolean, showBars = false): string {
+  const cell = (label: string, percent: number) =>
+    showBars ? `${label} ${meterText(percent)} ${Math.round(percent)}%` : `${label} ${Math.round(percent)}%`
+  const parts = windowsNow(snapshot, nowMs).map(w => cell(w.label, w.percentUsed))
+  if (showContext && snapshot.context !== null) parts.push(cell('CTX', snapshot.context.percent))
   return parts.length > 0 ? parts.join(' · ') : 'Token Watch: no reading yet'
+}
+
+// The status bar's bars: a meter of METER_CELLS filled and empty
+// parallelograms, filled in proportion with no minimum, as the mod's bars are.
+// A status bar item is one run of text in one colour, so this is the closest
+// it gets to the band.
+const METER_CELLS = 8
+export function meterText(percent: number): string {
+  const filled = Math.round((Math.max(0, Math.min(100, percent)) / 100) * METER_CELLS)
+  return '▰'.repeat(filled) + '▱'.repeat(METER_CELLS - filled)
 }
 
 // The highest level among what the status bar shows.

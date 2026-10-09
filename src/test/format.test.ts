@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { age, categoryColor, countdown, level, panelModel, RESERVE, short, statusText, tooltipMarkdown, TRACK, worstLevel } from '../format'
+import { age, categoryColor, countdown, level, meterText, panelModel, RESERVE, short, statusText, tooltipMarkdown, TRACK, worstLevel } from '../format'
 import type { Snapshot } from '../snapshot'
 
 const NOW = Date.parse('2026-10-03T12:00:00Z')
@@ -124,4 +124,12 @@ test('category colours: hex values pass through, theme names get a stable fallba
   const fallback = categoryColor('green_FOR_SUBAGENTS_ONLY', 'mcp server instructions')
   assert.match(fallback, /^#[0-9a-f]{6}$/i)
   assert.equal(categoryColor('promptBorder', 'mcp server instructions'), fallback)
+})
+
+test('status bars: an 8-cell meter beside each percentage, filled in proportion', () => {
+  assert.equal(meterText(0), '▱▱▱▱▱▱▱▱')
+  assert.equal(meterText(62.4), '▰▰▰▰▰▱▱▱')
+  assert.equal(meterText(100), '▰▰▰▰▰▰▰▰')
+  assert.equal(meterText(140), '▰▰▰▰▰▰▰▰')
+  assert.equal(statusText(SNAPSHOT, NOW, true, true), '5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%')
 })

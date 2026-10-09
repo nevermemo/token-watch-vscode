@@ -109,7 +109,7 @@ class TokenWatch implements vscode.Disposable {
       this.item.backgroundColor = undefined
       this.item.tooltip = markdown(waitingMarkdown(this.snapshotPath, snapshot, now))
     } else {
-      this.item.text = `$(pulse) ${statusText(snapshot, now, showContext)}`
+      this.item.text = `$(pulse) ${statusText(snapshot, now, showContext, settings().get<boolean>('showBars', true))}`
       this.item.color = undefined
       const level = worstLevel(snapshot, now, showContext)
       this.item.backgroundColor =
