@@ -5,23 +5,59 @@
   "version": "0.1.0",
   "publisher": "nevermemo",
   "license": "Apache-2.0",
-  "author": { "name": "Kadir Mert Okumus" },
-  "repository": { "type": "git", "url": "https://github.com/nevermemo/token-watch-vscode" },
+  "author": {
+    "name": "Kadir Mert Okumus"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nevermemo/token-watch-vscode"
+  },
   "homepage": "https://github.com/nevermemo/token-watch-vscode#readme",
-  "bugs": { "url": "https://github.com/nevermemo/token-watch-vscode/issues" },
-  "engines": { "vscode": "^1.94.0", "node": ">=20" },
-  "categories": ["Other"],
-  "keywords": ["claude code", "tokens", "usage", "context window", "status bar"],
+  "bugs": {
+    "url": "https://github.com/nevermemo/token-watch-vscode/issues"
+  },
+  "engines": {
+    "vscode": "^1.94.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "claude code",
+    "tokens",
+    "usage",
+    "context window",
+    "status bar"
+  ],
   "capabilities": {
-    "untrustedWorkspaces": { "supported": true },
+    "untrustedWorkspaces": {
+      "supported": true
+    },
     "virtualWorkspaces": true
   },
-  "activationEvents": ["onStartupFinished", "onWebviewPanel:tokenWatch.panel"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onWebviewPanel:tokenWatch.panel"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      { "command": "tokenWatch.showPanel", "title": "Show Panel", "category": "Token Watch" },
-      { "command": "tokenWatch.refresh", "title": "Refresh", "category": "Token Watch" }
+      {
+        "command": "tokenWatch.showPanel",
+        "title": "Show Panel",
+        "category": "Token Watch"
+      },
+      {
+        "command": "tokenWatch.refresh",
+        "title": "Refresh",
+        "category": "Token Watch"
+      },
+      {
+        "command": "tokenWatch.toggleBars",
+        "title": "Meters On/Off",
+        "category": "Token Watch"
+      }
     ],
     "configuration": {
       "title": "Token Watch",
@@ -39,11 +75,27 @@
         "tokenWatch.showBars": {
           "type": "boolean",
           "default": true,
-          "description": "Draw a small meter beside each percentage in the status bar item (5H ▰▰▰▰▰▱▱▱ 62%)."
+          "description": "Draw a small meter beside each percentage in the status bar (5H ▰▰▰▰▰▰▰▱ 82%). A click on a meter turns this on or off."
+        },
+        "tokenWatch.show": {
+          "type": "string",
+          "enum": [
+            "all",
+            "alerts"
+          ],
+          "default": "all",
+          "enumDescriptions": [
+            "Every meter.",
+            "Only the meters from 50% up; the icon stays to open the panel."
+          ],
+          "description": "Which meters the status bar shows."
         },
         "tokenWatch.alignment": {
           "type": "string",
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right"
+          ],
           "default": "right",
           "description": "Which side of the status bar the item sits on."
         }

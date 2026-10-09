@@ -79,19 +79,44 @@ export function windowsNow(snapshot: Snapshot, nowMs: number): SnapshotWindow[] 
   return snapshot.windows.map(w => current(w, nowMs))
 }
 
-// The status bar's text: "5H 62% · WK 31% · CTX 21%".
-export function statusText(snapshot: Snapshot, nowMs: number, showContext: boolean, showBars = false): string {
-  const cell = (label: string, percent: number) =>
-    showBars ? `${label} ${meterText(percent)} ${Math.round(percent)}%` : `${label} ${Math.round(percent)}%`
-  const parts = windowsNow(snapshot, nowMs).map(w => cell(w.label, w.percentUsed))
-  if (showContext && snapshot.context !== null) parts.push(cell('CTX', snapshot.context.percent))
-  return parts.length > 0 ? parts.join(' · ') : 'Token Watch: no reading yet'
+// One status bar item per meter, so each takes its own level colour.
+export type StatusCell = { key: string; text: string; level: Level }
+
+export type StatusOptions = {
+  showContext: boolean
+  showBars: boolean
+  // 'alerts': only the meters from 50% up.
+  show: 'all' | 'alerts'
 }
 
-// The status bar's bars: a meter of METER_CELLS filled and empty
-// parallelograms, filled in proportion with no minimum, as the mod's bars are.
-// A status bar item is one run of text in one colour, so this is the closest
-// it gets to the band.
+// The status bar's cells: "5H ▏░░░░░ 2%", "WK ▏░░░░░ 2%", "CTX ▎░░░░░ 4%",
+// or without the meters "5H 2%". A usage window from 80% up also says when
+// it resets: "5H ████▉░ 82% · 41m".
+export function statusCells(snapshot: Snapshot, nowMs: number, options: StatusOptions): StatusCell[] {
+  const cell = (key: string, label: string, percent: number, resetsAt: string | null): StatusCell => {
+    const l = level(percent)
+    const meter = options.showBars ? ` ${meterText(percent)}` : ''
+    const left = l === 'error' ? countdown(resetsAt, nowMs) : ''
+    return { key, text: `${label}${meter} ${Math.round(percent)}%${left ? ` · ${left}` : ''}`, level: l }
+  }
+  const cells = windowsNow(snapshot, nowMs).map(w => cell(w.kind, w.label, w.percentUsed, w.resetsAt))
+  if (options.showContext && snapshot.context !== null) {
+    cells.push(cell('context', 'CTX', snapshot.context.percent, null))
+  }
+  return options.show === 'alerts' ? cells.filter(c => c.level !== 'ok') : cells
+}
+
+// The cells as one line, for text that is not the status bar.
+export function statusText(snapshot: Snapshot, nowMs: number, showContext: boolean, showBars = false): string {
+  const cells = statusCells(snapshot, nowMs, { showContext, showBars, show: 'all' })
+  return cells.length > 0 ? cells.map(c => c.text).join(' · ') : 'Token Watch: no reading yet'
+}
+
+// A status bar meter: METER_CELLS filled and hollow parallelograms, filled
+// in proportion with no minimum, as the mod's bars are. These are the glyphs
+// the status bar's proportional font draws cleanly: block elements leave
+// gaps after partial cells and draw shades as grain, and a heavy line ━
+// comes out barely thicker than a thin one ─.
 const METER_CELLS = 8
 export function meterText(percent: number): string {
   const filled = Math.round((Math.max(0, Math.min(100, percent)) / 100) * METER_CELLS)
@@ -116,8 +141,6 @@ export function legendName(category: SnapshotCategory): string {
   return LEGEND[category.label] ?? category.label
 }
 
-// The tooltip, as Markdown: each window with its countdown, the context with
-// its auto-compact point and categories largest first, the snapshot's age.
 // The tooltip: the panel in miniature. A hover renders only a sanitized
 // subset of HTML, with no CSS boxes, so each bar is a small SVG image (data
 // URIs are allowed there) in a table laid out like the panel's rows, and each
@@ -155,8 +178,14 @@ export function tooltipMarkdown(snapshot: Snapshot, nowMs: number): string {
   const footer = [`snapshot ${age(nowMs - Date.parse(snapshot.writtenAt))} ago`]
   if (snapshot.session.cwd) footer.push(`session in \`${snapshot.session.cwd}\``)
   parts.push(`_Token Watch · ${footer.join(' · ')}_`)
+  parts.push(TOOLTIP_ACTIONS)
   return parts.join('\n\n')
 }
+
+// The tooltip's links: the panel, and the meters on or off (a left click on
+// a meter does the same). The extension trusts exactly these two commands.
+export const TOOLTIP_COMMANDS = ['tokenWatch.showPanel', 'tokenWatch.toggleBars']
+const TOOLTIP_ACTIONS = '[$(graph) Open panel](command:tokenWatch.showPanel) · [Meters on/off](command:tokenWatch.toggleBars)'
 
 // A tooltip bar's size in pixels: as thin as the panel's.
 const TIP_BAR_WIDTH = 180

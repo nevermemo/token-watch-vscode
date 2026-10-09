@@ -30,30 +30,33 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 
 | Where | What |
 |-------|------|
-| Status bar | `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%`: a small meter beside each percentage, filled in proportion. The item turns to the warning colour from 50% and the error colour from 80%, like the mod's percentages. |
-| Tooltip | Each window with its reset countdown; the context total, auto-compact point and categories, largest first; the snapshot's age. |
-| Panel (click the item, or **Token Watch: Show Panel**) | The mod's bars: a meter per window, the context broken down by category with the free space as a grey track and the reserve past the auto-compact point darker, and the legend. It refreshes as the snapshot changes. |
+| Status bar | A pulse icon, then one item per meter: `5H ▰▰▰▰▰▱▱▱ 62%`, `WK ▰▰▱▱▱▱▱▱ 31%`, `CTX ▰▰▱▱▱▱▱▱ 21%`. Each takes its own colour: green below 50%, yellow from 50%, and from 80% the error background with the time until that window resets (`5H ▰▰▰▰▰▰▰▱ 82% · 41m`). **Click a meter** to turn the meters on or off (`5H 82% · 41m`). **Click the icon** to open the panel. |
+| Tooltip | The panel in miniature: a row per meter with its coloured bar, percentage and reset countdown or token count, the auto-compact point, the legend, the snapshot's age, and links to open the panel or turn the meters on or off. |
+| Panel (click the icon, the tooltip's link, or **Token Watch: Show Panel**) | The mod's bars: a meter per window, the context broken down by category with the free space as a grey track and the reserve past the auto-compact point darker, and the legend. It refreshes as the snapshot changes. |
 
 - A window whose reset time has passed shows 0% until the next response.
-- When no session has written for 150 seconds, or the file is missing, the item dims to `Token Watch: waiting for Claude Code`.
+- When no session has written for 150 seconds, or the file is missing, the meters give way to a dim `Token Watch: waiting for Claude Code`.
+- VS Code gives extensions no right-click on a status bar item (its context menu, for hiding items, is VS Code's own), so the panel opens from the icon or the tooltip.
 
 ## Settings
 
 | Setting | Default | Meaning |
 |---------|---------|---------|
 | `tokenWatch.snapshotPath` | `""` | The snapshot's path. Empty means `~/.claude/token-watch/usage.json`; `~` is expanded. |
-| `tokenWatch.showContext` | `true` | Show `CTX` in the status bar item. |
-| `tokenWatch.showBars` | `true` | Draw the small meter beside each percentage in the status bar item. |
-| `tokenWatch.alignment` | `right` | Which side of the status bar the item sits on. |
+| `tokenWatch.showContext` | `true` | Show `CTX` in the status bar. |
+| `tokenWatch.showBars` | `true` | Draw the meter beside each percentage. A click on a meter flips this. |
+| `tokenWatch.show` | `all` | `alerts` shows only the meters from 50% up, for a crowded status bar; the icon stays. |
+| `tokenWatch.alignment` | `right` | Which side of the status bar the group sits on. |
 
 ## Commands
 
 - **Token Watch: Show Panel**
+- **Token Watch: Meters On/Off**
 - **Token Watch: Refresh**: reads the snapshot again now (it is also read on every change and every 30 seconds).
 
 ## Privacy
 
-Read-only. The extension reads one file, the snapshot the mod writes, watches its folder for changes, and keeps a 30-second timer. No network requests, no telemetry, nothing written. The snapshot's format is documented in the mod's README under "The usage snapshot".
+Read-only. The extension reads one file, the snapshot the mod writes, watches its folder for changes, and keeps a 30-second timer. No network requests and no telemetry. The only thing it writes is its own `tokenWatch.showBars` setting, when you click a meter. The snapshot's format is documented in the mod's README under "The usage snapshot".
 
 ## Development
 

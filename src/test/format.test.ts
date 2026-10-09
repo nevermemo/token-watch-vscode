@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { age, categoryColor, countdown, level, meterText, panelModel, RESERVE, short, statusText, tooltipMarkdown, TRACK, worstLevel } from '../format'
+import { age, categoryColor, statusCells, countdown, level, meterText, panelModel, RESERVE, short, statusText, tooltipMarkdown, TRACK, worstLevel } from '../format'
 import type { Snapshot } from '../snapshot'
 
 const NOW = Date.parse('2026-10-03T12:00:00Z')
@@ -75,7 +75,7 @@ test('extra windows keep the snapshot order after 5H and WK', () => {
       { kind: 'mystery_window', label: 'mystery_window', percentUsed: 5, resetsAt: null },
     ],
   }
-  assert.equal(statusText(extra, NOW, true), '5H 62% · WK 31% · FB 88% · mystery_window 5% · CTX 21%')
+  assert.equal(statusText(extra, NOW, true), '5H 62% · WK 31% · FB 88% · 1h 00m · mystery_window 5% · CTX 21%')
   assert.equal(worstLevel(extra, NOW, true), 'error')
 })
 
@@ -138,10 +138,38 @@ test('category colours: hex values pass through, theme names get a stable fallba
   assert.equal(categoryColor('promptBorder', 'mcp server instructions'), fallback)
 })
 
-test('status bars: an 8-cell meter beside each percentage, filled in proportion', () => {
+test('status meters: eight parallelograms filled in proportion, no minimum', () => {
   assert.equal(meterText(0), '▱▱▱▱▱▱▱▱')
-  assert.equal(meterText(62.4), '▰▰▰▰▰▱▱▱')
+  assert.equal(meterText(4), '▱▱▱▱▱▱▱▱')
+  assert.equal(meterText(7), '▰▱▱▱▱▱▱▱')
+  assert.equal(meterText(50), '▰▰▰▰▱▱▱▱')
+  assert.equal(meterText(82), '▰▰▰▰▰▰▰▱')
   assert.equal(meterText(100), '▰▰▰▰▰▰▰▰')
   assert.equal(meterText(140), '▰▰▰▰▰▰▰▰')
-  assert.equal(statusText(SNAPSHOT, NOW, true, true), '5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%')
+})
+
+test('status cells: one per meter with its level, a countdown from 80%, meters optional', () => {
+  const near: Snapshot = { ...SNAPSHOT, windows: [{ ...SNAPSHOT.windows[0], percentUsed: 82 }, SNAPSHOT.windows[1]] }
+  const cells = statusCells(near, NOW, { showContext: true, showBars: true, show: 'all' })
+  assert.deepEqual(
+    cells.map(c => [c.key, c.text, c.level]),
+    [
+      ['five_hour', '5H ▰▰▰▰▰▰▰▱ 82% · 2h 14m', 'error'],
+      ['seven_day', 'WK ▰▰▱▱▱▱▱▱ 31%', 'ok'],
+      ['context', 'CTX ▰▰▱▱▱▱▱▱ 21%', 'ok'],
+    ],
+  )
+  assert.deepEqual(
+    statusCells(near, NOW, { showContext: true, showBars: false, show: 'all' }).map(c => c.text),
+    ['5H 82% · 2h 14m', 'WK 31%', 'CTX 21%'],
+  )
+  // Alerts only: the meters from 50% up.
+  assert.deepEqual(
+    statusCells(SNAPSHOT, NOW, { showContext: true, showBars: true, show: 'alerts' }).map(c => c.key),
+    ['five_hour'],
+  )
+  assert.deepEqual(statusCells(SNAPSHOT, NOW, { showContext: false, showBars: false, show: 'all' }).map(c => c.key), [
+    'five_hour',
+    'seven_day',
+  ])
 })
