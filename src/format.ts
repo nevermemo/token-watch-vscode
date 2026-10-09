@@ -118,24 +118,77 @@ export function legendName(category: SnapshotCategory): string {
 
 // The tooltip, as Markdown: each window with its countdown, the context with
 // its auto-compact point and categories largest first, the snapshot's age.
+// The tooltip: the panel in miniature. A hover renders only a sanitized
+// subset of HTML, with no CSS boxes, so each bar is a small SVG image (data
+// URIs are allowed there) in a table laid out like the panel's rows, and each
+// legend swatch is a tiny SVG too. The extension sets supportHtml for it.
 export function tooltipMarkdown(snapshot: Snapshot, nowMs: number): string {
-  const lines: string[] = []
-  for (const w of windowsNow(snapshot, nowMs)) {
-    const left = countdown(w.resetsAt, nowMs)
-    lines.push(`**${w.label}** ${Math.round(w.percentUsed)}%${left ? ` · resets in ${left}` : ''}`)
+  const model = panelModel(snapshot, nowMs, false)
+  const parts: string[] = []
+  if (model.rows.length > 0) {
+    const rows = model.rows.map(row => {
+      const percent = row.color
+        ? `<span style="color:${row.color};">${row.percent}%</span>`
+        : `${row.percent}%`
+      return (
+        `<tr><td>${escapeHtml(row.label)}&nbsp;&nbsp;</td>` +
+        `<td>${svgImage(barSvg(row.segments), TIP_BAR_WIDTH, TIP_BAR_HEIGHT)}</td>` +
+        `<td align="right">&nbsp;&nbsp;${percent}</td>` +
+        `<td>&nbsp;&nbsp;${escapeHtml(row.detail)}</td></tr>`
+      )
+    })
+    parts.push(`<table>${rows.join('')}</table>`)
+  } else {
+    parts.push('No reading yet.')
   }
   const context = snapshot.context
-  if (context !== null) {
-    const compacts = context.compactsAt !== null ? ` · auto-compacts at ${short(context.compactsAt)}` : ''
-    lines.push(`**CTX** ${context.percent}% · ${short(context.total)} of ${short(context.window)}${compacts}`)
-    const parts = legend(context).map(c => `${legendName(c)} ${short(c.tokens)}`)
-    if (parts.length > 0) lines.push(parts.join(' · '))
+  if (context !== null && context.compactsAt !== null) {
+    parts.push(`Auto-compacts at ${short(context.compactsAt)}.`)
   }
-  if (lines.length === 0) lines.push('No reading yet.')
+  if (model.legend.length > 0) {
+    parts.push(
+      model.legend
+        .map(item => `${svgImage(swatchSvg(item.color), 14, 8)}&nbsp;${escapeHtml(item.name)} ${item.tokens}`)
+        .join('&nbsp;&nbsp;&nbsp;'),
+    )
+  }
   const footer = [`snapshot ${age(nowMs - Date.parse(snapshot.writtenAt))} ago`]
   if (snapshot.session.cwd) footer.push(`session in \`${snapshot.session.cwd}\``)
-  lines.push(`_Token Watch · ${footer.join(' · ')}_`)
-  return lines.join('\n\n')
+  parts.push(`_Token Watch · ${footer.join(' · ')}_`)
+  return parts.join('\n\n')
+}
+
+// A tooltip bar's size in pixels: as thin as the panel's.
+const TIP_BAR_WIDTH = 180
+const TIP_BAR_HEIGHT = 8
+
+// One bar as SVG: its segments side by side, each as wide as its share.
+export function barSvg(segments: { color: string; share: number }[]): string {
+  let x = 0
+  const rects = segments.map(segment => {
+    const width = Math.max(0, segment.share) * TIP_BAR_WIDTH
+    const rect = `<rect x="${x.toFixed(2)}" y="0" width="${width.toFixed(2)}" height="${TIP_BAR_HEIGHT}" fill="${segment.color}"/>`
+    x += width
+    return rect
+  })
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${TIP_BAR_WIDTH}" height="${TIP_BAR_HEIGHT}">` +
+    `<clipPath id="r"><rect width="${TIP_BAR_WIDTH}" height="${TIP_BAR_HEIGHT}" rx="2"/></clipPath>` +
+    `<g clip-path="url(#r)">${rects.join('')}</g></svg>`
+  )
+}
+
+function swatchSvg(color: string): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="8"><rect width="14" height="8" rx="2" fill="${color}"/></svg>`
+}
+
+function svgImage(svg: string, width: number, height: number): string {
+  const uri = `data:image/svg+xml;base64,${Buffer.from(svg, 'utf8').toString('base64')}`
+  return `<img src="${uri}" width="${width}" height="${height}">`
+}
+
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 // The tooltip while there is no live snapshot.

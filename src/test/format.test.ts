@@ -93,14 +93,26 @@ test('worst level is the highest shown', () => {
   assert.equal(worstLevel({ ...SNAPSHOT, windows: [] }, NOW, true), 'ok')
 })
 
-test('tooltip: each window with its countdown, the context, the legend largest first, the age', () => {
+test('tooltip: the panel in miniature, a row per meter with an SVG bar, then the legend and the age', () => {
   const md = tooltipMarkdown(SNAPSHOT, NOW)
-  assert.match(md, /\*\*5H\*\* 62% · resets in 2h 14m/)
-  assert.match(md, /\*\*WK\*\* 31% · resets in 3d 4h/)
-  assert.match(md, /\*\*CTX\*\* 21% · 212k of 1M · auto-compacts at 950k/)
-  assert.match(md, /messages 186k · tools 12k · system 3\.4k/)
+  const rows = md.match(/<tr>.*?<\/tr>/g) ?? []
+  assert.equal(rows.length, 3)
+  assert.match(rows[0], /<td>5H&nbsp;&nbsp;<\/td><td><img src="data:image\/svg\+xml;base64,[^"]+" width="180" height="8"><\/td>/)
+  assert.match(rows[0], /<span style="color:#e8c66a;">62%<\/span>/)
+  assert.match(rows[0], /2h 14m/)
+  assert.match(rows[1], /WK.*31%.*3d 4h/)
+  assert.match(rows[2], /CTX.*21%.*212k \/ 1M/)
+  assert.match(md, /Auto-compacts at 950k\./)
+  // Legend largest first, each with a swatch image.
+  assert.ok(md.indexOf('messages 186k') < md.indexOf('tools 12k'))
+  assert.ok(md.indexOf('tools 12k') < md.indexOf('system 3.4k'))
+  assert.match(md, /<img src="data:image\/svg\+xml;base64,[^"]+" width="14" height="8">&nbsp;messages 186k/)
   assert.match(md, /snapshot 12s ago/)
-  assert.doesNotMatch(md, /free/)
+  assert.doesNotMatch(md, /free \d/)
+  // The 5H bar draws the used share in its level colour over the track.
+  const svg = Buffer.from(rows[0].match(/base64,([^"]+)/)![1], 'base64').toString('utf8')
+  assert.match(svg, /<rect x="0\.00" y="0" width="112\.32" height="8" fill="#e8c66a"\/>/)
+  assert.match(svg, new RegExp(`fill="${TRACK}"`))
 })
 
 test('panel model: usage meters, then the context largest first, free as track, the reserve darker', () => {

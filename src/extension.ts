@@ -197,5 +197,7 @@ class TokenWatch implements vscode.Disposable {
 function markdown(text: string): vscode.MarkdownString {
   const md = new vscode.MarkdownString(text)
   md.supportThemeIcons = true
+  // The tooltip's table and SVG bars (VS Code sanitizes the HTML).
+  md.supportHtml = true
   return md
 }
