@@ -30,7 +30,7 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 
 | Where | What |
 |-------|------|
-| Status bar | A pulse icon, then one item per meter: `5H ▰▰▰▰▰▱▱▱ 62%`, `WK ▰▰▱▱▱▱▱▱ 31%`, `CTX ▰▰▱▱▱▱▱▱ 21%`. Each takes its own colour: green below 50%, yellow from 50%, and from 80% the error background with the time until that window resets (`5H ▰▰▰▰▰▰▰▱ 82% · 41m`). **Click a meter** to turn the meters on or off (`5H 82% · 41m`). **Click the icon** to open the panel. |
+| Status bar | A pulse icon, then one line of meters: `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%`. The line turns to the warning background when a meter reaches 50% and the error background from 80%, when that window's reset time is added too (`5H ▰▰▰▰▰▰▰▱ 82% · 41m`). **Click the meters** to turn them on or off (`5H 62% · WK 31% · CTX 21%`). **Click the icon** to open the panel. |
 | Tooltip | The panel in miniature: a row per meter with its coloured bar, percentage and reset countdown or token count, the auto-compact point, the legend, the snapshot's age, and links to open the panel or turn the meters on or off. |
 | Panel (click the icon, the tooltip's link, or **Token Watch: Show Panel**) | The mod's bars: a meter per window, the context broken down by category with the free space as a grey track and the reserve past the auto-compact point darker, and the legend. It refreshes as the snapshot changes. |
 
