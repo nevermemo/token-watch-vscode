@@ -21,6 +21,11 @@ export function activate(context: vscode.ExtensionContext): void {
     watch,
     vscode.commands.registerCommand('tokenWatch.showPanel', () => watch.showPanel()),
     vscode.commands.registerCommand('tokenWatch.refresh', () => watch.refresh()),
+    // A panel left open when VS Code closed comes back in its place, rather
+    // than leaving an empty editor group behind.
+    vscode.window.registerWebviewPanelSerializer('tokenWatch.panel', {
+      deserializeWebviewPanel: async panel => watch.adoptPanel(panel),
+    }),
     vscode.workspace.onDidChangeConfiguration(event => {
       if (event.affectsConfiguration('tokenWatch')) watch.reconfigure()
     }),
@@ -122,13 +127,27 @@ class TokenWatch implements vscode.Disposable {
       this.panel.reveal()
       return
     }
-    this.panel = vscode.window.createWebviewPanel('tokenWatch.panel', 'Token Watch', vscode.ViewColumn.Beside, {
-      enableScripts: true,
-      retainContextWhenHidden: true,
+    this.adoptPanel(
+      vscode.window.createWebviewPanel('tokenWatch.panel', 'Token Watch', vscode.ViewColumn.Beside, {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+      }),
+    )
+  }
+
+  // Takes charge of a panel, a new one or one VS Code restored.
+  adoptPanel(panel: vscode.WebviewPanel): void {
+    this.panel?.dispose()
+    this.panel = panel
+    panel.webview.options = { enableScripts: true }
+    panel.webview.html = panelHtml()
+    // The page asks for the figures once its script runs, so a restored
+    // panel is never left blank.
+    panel.webview.onDidReceiveMessage(message => {
+      if ((message as { type?: string } | null)?.type === 'ready') this.render()
     })
-    this.panel.webview.html = panelHtml()
-    this.panel.onDidDispose(() => {
-      this.panel = null
+    panel.onDidDispose(() => {
+      if (this.panel === panel) this.panel = null
     })
     this.render()
   }

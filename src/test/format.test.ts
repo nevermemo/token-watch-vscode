@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-import { age, countdown, level, panelModel, RESERVE, short, statusText, tooltipMarkdown, TRACK, worstLevel } from '../format'
+import { age, categoryColor, countdown, level, panelModel, RESERVE, short, statusText, tooltipMarkdown, TRACK, worstLevel } from '../format'
 import type { Snapshot } from '../snapshot'
 
 const NOW = Date.parse('2026-10-03T12:00:00Z')
@@ -117,4 +117,11 @@ test('panel model: usage meters, then the context largest first, free as track, 
   assert.deepEqual(model.legend.map(l => `${l.name} ${l.tokens}`), ['messages 186k', 'tools 12k', 'system 3.4k'])
   assert.equal(panelModel(SNAPSHOT, NOW, true).waiting, 'The last session has ended; waiting for Claude Code.')
   assert.equal(panelModel(null, NOW, true).waiting, 'Waiting for Claude Code: no snapshot yet.')
+})
+
+test('category colours: hex values pass through, theme names get a stable fallback', () => {
+  assert.equal(categoryColor('#d97757', 'messages'), '#d97757')
+  const fallback = categoryColor('green_FOR_SUBAGENTS_ONLY', 'mcp server instructions')
+  assert.match(fallback, /^#[0-9a-f]{6}$/i)
+  assert.equal(categoryColor('promptBorder', 'mcp server instructions'), fallback)
 })

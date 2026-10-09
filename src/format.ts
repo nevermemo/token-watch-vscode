@@ -20,6 +20,20 @@ const LEGEND: Record<string, string> = {
   'mcp tools': 'mcp',
 }
 
+// Colours for categories Claude Code names by a theme key (such as
+// "green_FOR_SUBAGENTS_ONLY") rather than a hex value, which a webview
+// cannot draw: picked by the label, so a category keeps its colour.
+const FALLBACK_COLORS = ['#6fbf73', '#c39bd3', '#f0b27a', '#76d7c4', '#85c1e9', '#f1948a']
+
+// A category's colour as CSS: its own when it is a hex value, otherwise a
+// fallback chosen by its label.
+export function categoryColor(color: string, label: string): string {
+  if (/^#[0-9a-f]{3,8}$/i.test(color)) return color
+  let hash = 0
+  for (const ch of label) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0
+  return FALLBACK_COLORS[hash % FALLBACK_COLORS.length]
+}
+
 export function level(percent: number): Level {
   if (percent < 50) return 'ok'
   if (percent < 80) return 'warning'
@@ -162,7 +176,7 @@ export function panelModel(snapshot: Snapshot | null, nowMs: number, stale: bool
     // Largest category first, as the legend lists them, then the free
     // space as track, then the reserve past the auto-compact point.
     const segments = [
-      ...legend(context).map(c => ({ color: c.color, share: c.tokens / context.window })),
+      ...legend(context).map(c => ({ color: categoryColor(c.color, c.label), share: c.tokens / context.window })),
       ...context.categories.filter(c => c.kind === 'free').map(c => ({ color: TRACK, share: c.tokens / context.window })),
     ]
     const reserve = context.compactsAt !== null ? Math.max(0, context.window - context.compactsAt) : 0
@@ -179,7 +193,7 @@ export function panelModel(snapshot: Snapshot | null, nowMs: number, stale: bool
   if (snapshot.session.cwd) footer.push(snapshot.session.cwd)
   return {
     rows,
-    legend: legend(context).map(c => ({ name: legendName(c), color: c.color, tokens: short(c.tokens) })),
+    legend: legend(context).map(c => ({ name: legendName(c), color: categoryColor(c.color, c.label), tokens: short(c.tokens) })),
     footer: footer.join(' · '),
     waiting: stale ? 'The last session has ended; waiting for Claude Code.' : null,
   }

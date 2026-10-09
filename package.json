@@ -12,7 +12,11 @@
   "engines": { "vscode": "^1.94.0", "node": ">=20" },
   "categories": ["Other"],
   "keywords": ["claude code", "tokens", "usage", "context window", "status bar"],
-  "activationEvents": ["onStartupFinished"],
+  "capabilities": {
+    "untrustedWorkspaces": { "supported": true },
+    "virtualWorkspaces": true
+  },
+  "activationEvents": ["onStartupFinished", "onWebviewPanel:tokenWatch.panel"],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [

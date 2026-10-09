@@ -13,9 +13,14 @@ export function panelHtml(): string {
 <title>Token Watch</title>
 <style nonce="${nonce}">
   body { font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); color: var(--vscode-foreground); padding: 12px 16px; }
-  .rows { display: grid; grid-template-columns: max-content 1fr max-content max-content; column-gap: 12px; row-gap: 10px; align-items: center; max-width: 720px; }
-  .label, .detail { color: var(--vscode-descriptionForeground); }
-  .bar { display: flex; height: 8px; min-width: 120px; border-radius: 2px; overflow: hidden; }
+  .rows { display: grid; grid-template-columns: max-content minmax(32px, 1fr) max-content max-content; column-gap: 12px; row-gap: 10px; align-items: center; max-width: 720px; }
+  .label, .detail { color: var(--vscode-descriptionForeground); white-space: nowrap; }
+  .bar { display: flex; height: 8px; min-width: 0; border-radius: 2px; overflow: hidden; }
+  /* A narrow panel gives up the detail column before the bars get too short. */
+  @media (max-width: 300px) {
+    .rows { grid-template-columns: max-content minmax(32px, 1fr) max-content; column-gap: 8px; }
+    .detail { display: none; }
+  }
   .bar span { display: block; height: 100%; flex-basis: 0; flex-shrink: 1; min-width: 0; }
   .percent { text-align: right; min-width: 3.5em; font-variant-numeric: tabular-nums; }
   .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 14px 0 0; padding: 0; list-style: none; color: var(--vscode-descriptionForeground); }
@@ -76,6 +81,7 @@ export function panelHtml(): string {
   window.addEventListener('message', event => {
     if (event.data && event.data.type === 'model') render(event.data.model)
   })
+  acquireVsCodeApi().postMessage({ type: 'ready' })
 </script>
 </body>
 </html>`
