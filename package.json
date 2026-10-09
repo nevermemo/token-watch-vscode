@@ -75,7 +75,7 @@
         "tokenWatch.showBars": {
           "type": "boolean",
           "default": true,
-          "description": "Draw a small meter beside each percentage in the status bar (5H ▰▰▰▰▰▰▰▱ 82%). A click on a meter turns this on or off."
+          "description": "Draw a small meter beside each percentage in the status bar (5H ████▉░ 82%). A click on a meter turns this on or off."
         },
         "tokenWatch.show": {
           "type": "string",

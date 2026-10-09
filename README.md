@@ -2,7 +2,7 @@
 
 **Your Claude Code plan usage and context window in the VS Code status bar.**
 
-Token Watch for VS Code shows `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%` in the status bar: the 5-hour and weekly usage windows of your Claude subscription, any other window Claude Code reports (a model's own allowance, a gateway's spend limit), and how full the current session's context window is. Hover for the reset countdowns and the context breakdown; click for a panel that draws the same bars as the [Token Watch](https://github.com/nevermemo/token-watch) mod for Claude Code.
+Token Watch for VS Code shows `5H ████▉░ 82% · 41m    WK ██▏░░░ 35%    CTX █▌░░░░ 26%` in the status bar: the 5-hour and weekly usage windows of your Claude subscription, any other window Claude Code reports (a model's own allowance, a gateway's spend limit), and how full the current session's context window is. Hover for the reset countdowns and the context breakdown; click for a panel that draws the same bars as the [Token Watch](https://github.com/nevermemo/token-watch) mod for Claude Code.
 
 It is that mod's companion and needs it: the mod writes a small snapshot file after each response, and this extension reads it. The VS Code extension's chat panel shows no mod drawings, which is why the band lives in the status bar here.
 
@@ -30,7 +30,7 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 
 | Where | What |
 |-------|------|
-| Status bar | A pulse icon, then one line of meters: `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%`. The line turns to the warning background when a meter reaches 50% and the error background from 80%, when that window's reset time is added too (`5H ▰▰▰▰▰▰▰▱ 82% · 41m`). **Click the meters** to turn them on or off (`5H 62% · WK 31% · CTX 21%`). **Click the icon** to open the panel. |
+| Status bar | A pulse icon, then one line of meters: `5H ████▉░ 82% · 41m    WK ██▏░░░ 35%    CTX █▌░░░░ 26%`. The line turns to the warning background when a meter reaches 50% and the error background from 80%, when that window's reset time is added too (`5H ████▉░ 82% · 41m`). **Click the meters** to turn them on or off (`5H 82% · 41m    WK 35%    CTX 26%`). **Click the icon** to open the panel. |
 | Tooltip | The panel in miniature: a row per meter with its coloured bar, percentage and reset countdown or token count, the auto-compact point, the legend, the snapshot's age, and links to open the panel or turn the meters on or off. |
 | Panel (click the icon, the tooltip's link, or **Token Watch: Show Panel**) | The mod's bars: a meter per window, the context broken down by category with the free space as a grey track and the reserve past the auto-compact point darker, and the legend. It refreshes as the snapshot changes. |
 

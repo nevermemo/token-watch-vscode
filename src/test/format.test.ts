@@ -138,14 +138,16 @@ test('category colours: hex values pass through, theme names get a stable fallba
   assert.equal(categoryColor('promptBorder', 'mcp server instructions'), fallback)
 })
 
-test('status meters: eight parallelograms filled in proportion, no minimum', () => {
-  assert.equal(meterText(0), '▱▱▱▱▱▱▱▱')
-  assert.equal(meterText(4), '▱▱▱▱▱▱▱▱')
-  assert.equal(meterText(7), '▰▱▱▱▱▱▱▱')
-  assert.equal(meterText(50), '▰▰▰▰▱▱▱▱')
-  assert.equal(meterText(82), '▰▰▰▰▰▰▰▱')
-  assert.equal(meterText(100), '▰▰▰▰▰▰▰▰')
-  assert.equal(meterText(140), '▰▰▰▰▰▰▰▰')
+test('status meters: six cells filled in eighths, a light shade for the rest, no minimum', () => {
+  assert.equal(meterText(0), '░░░░░░')
+  assert.equal(meterText(1), '░░░░░░')
+  assert.equal(meterText(2), '▏░░░░░')
+  assert.equal(meterText(26), '█▌░░░░')
+  assert.equal(meterText(35), '██▏░░░')
+  assert.equal(meterText(82), '████▉░')
+  assert.equal(meterText(100), '██████')
+  assert.equal(meterText(140), '██████')
+  for (const p of [0, 2, 17, 33, 62.4, 82, 99, 100]) assert.equal([...meterText(p)].length, 6)
 })
 
 test('status cells: one per meter with its level, a countdown from 80%, meters optional', () => {
@@ -154,9 +156,9 @@ test('status cells: one per meter with its level, a countdown from 80%, meters o
   assert.deepEqual(
     cells.map(c => [c.key, c.text, c.level]),
     [
-      ['five_hour', '5H ▰▰▰▰▰▰▰▱ 82% · 2h 14m', 'error'],
-      ['seven_day', 'WK ▰▰▱▱▱▱▱▱ 31%', 'ok'],
-      ['context', 'CTX ▰▰▱▱▱▱▱▱ 21%', 'ok'],
+      ['five_hour', '5H ████▉░ 82% · 2h 14m', 'error'],
+      ['seven_day', 'WK █▉░░░░ 31%', 'ok'],
+      ['context', 'CTX █▎░░░░ 21%', 'ok'],
     ],
   )
   assert.deepEqual(

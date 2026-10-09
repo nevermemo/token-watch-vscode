@@ -14,7 +14,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import * as vscode from 'vscode'
 
-import { panelModel, statusCells, TOOLTIP_COMMANDS, tooltipMarkdown, waitingMarkdown, type Level, type StatusCell } from './format'
+import { CELL_GAP, panelModel, statusCells, TOOLTIP_COMMANDS, tooltipMarkdown, waitingMarkdown, type Level, type StatusCell } from './format'
 import { panelHtml } from './panel'
 import { isStale, parseSnapshot, resolveSnapshotPath, type Snapshot } from './snapshot'
 
@@ -200,7 +200,7 @@ class TokenWatch implements vscode.Disposable {
     }
     const rank: Record<Level, number> = { ok: 0, warning: 1, error: 2 }
     const worst = cells.reduce<Level>((w, c) => (rank[c.level] > rank[w] ? c.level : w), 'ok')
-    this.meters.text = cells.map(c => c.text).join(' · ')
+    this.meters.text = cells.map(c => c.text).join(CELL_GAP)
     this.meters.tooltip = tooltip
     this.meters.backgroundColor =
       worst === 'ok'

@@ -4,7 +4,7 @@
 
 First release.
 
-- Status bar: a pulse icon that opens the panel, then one line of meters, `5H ▰▰▰▰▰▱▱▱ 62% · WK ▰▰▱▱▱▱▱▱ 31% · CTX ▰▰▱▱▱▱▱▱ 21%`, on the warning background from 50% and the error background from 80%, when the window's reset time is added. A click on the meters turns them on or off.
+- Status bar: a pulse icon that opens the panel, then one line of meters, `5H ████▉░ 82% · 41m    WK ██▏░░░ 35%    CTX █▌░░░░ 26%`, on the warning background from 50% and the error background from 80%, when the window's reset time is added. A click on the meters turns them on or off.
 - Tooltip that looks like the panel in miniature: a row per meter with its coloured bar, percentage and reset countdown or token count, the auto-compact point, the legend with colour swatches, and the snapshot's age, with links to open the panel or turn the meters on or off.
 - Panel that draws the mod's bars and legend, refreshed live.
 - Watches the snapshot's folder, ticks every 30 seconds, and dims to `Token Watch: waiting for Claude Code` when the snapshot is missing or older than 150 seconds.

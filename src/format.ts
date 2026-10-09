@@ -112,16 +112,22 @@ export function statusText(snapshot: Snapshot, nowMs: number, showContext: boole
   return cells.length > 0 ? cells.map(c => c.text).join(' · ') : 'Token Watch: no reading yet'
 }
 
-// A status bar meter: METER_CELLS filled and hollow parallelograms, filled
-// in proportion with no minimum, as the mod's bars are. These are the glyphs
-// the status bar's proportional font draws cleanly: block elements leave
-// gaps after partial cells and draw shades as grain, and a heavy line ━
-// comes out barely thicker than a thin one ─.
-const METER_CELLS = 8
+// A status bar meter: METER_CELLS cells filled in eighths, so 2% already
+// shows a sliver, then a light shade for what is still available: "████▉░".
+// Pure proportion with no minimum, as the mod's bars are.
+const METER_CELLS = 6
+const EIGHTHS = ['', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
 export function meterText(percent: number): string {
-  const filled = Math.round((Math.max(0, Math.min(100, percent)) / 100) * METER_CELLS)
-  return '▰'.repeat(filled) + '▱'.repeat(METER_CELLS - filled)
+  const eighths = Math.round((Math.max(0, Math.min(100, percent)) / 100) * METER_CELLS * 8)
+  const full = Math.floor(eighths / 8)
+  const part = EIGHTHS[eighths % 8]
+  return '█'.repeat(full) + part + '░'.repeat(METER_CELLS - full - (part ? 1 : 0))
 }
+
+// What separates the windows on the status bar line: two em spaces, as wide
+// as four monospaced characters (ordinary spaces are narrow in the status
+// bar's proportional font, and a run of them folds into one).
+export const CELL_GAP = ' '.repeat(2)
 
 // The highest level among what the status bar shows.
 export function worstLevel(snapshot: Snapshot, nowMs: number, showContext: boolean): Level {
