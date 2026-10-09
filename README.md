@@ -56,7 +56,7 @@ The extension is not yet published to the VS Code Marketplace or Open VSX.
 
 ## Privacy
 
-Read-only. The extension reads one file, the snapshot the mod writes, watches its folder for changes, and keeps a 30-second timer. No network requests and no telemetry. The only thing it writes is its own `tokenWatch.showBars` setting, when you click a meter. The snapshot's format is documented in the mod's README under "The usage snapshot".
+The extension reads one file, the snapshot the mod writes, watches its folder for changes, and keeps a 30-second timer. No network requests and no telemetry. The only thing it writes is its own `tokenWatch.showBars` setting, when you click a meter. The snapshot's format is documented in the mod's README under "The usage snapshot".
 
 ## Development
 
